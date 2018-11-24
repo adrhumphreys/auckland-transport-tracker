@@ -17,5 +17,20 @@
   text-transform: uppercase;
   outline: none;
   z-index: 1;
-  font-family: Arial, Helvetica, sans-serif
+  font-family: Arial, Helvetica, sans-serif;
+  border-radius: 4px;
+}
+
+label {
+  user-select: none;
+}
+
+.map-controls {
+  position: absolute;
+  bottom: 40px;
+  right: 10px;
+}
+
+.map-marker {
+  transition: all 1000ms;
 }

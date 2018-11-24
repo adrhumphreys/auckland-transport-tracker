@@ -11,7 +11,7 @@ class ControlPanel extends React.Component<Props> {
   render() {
     return (
       <div className='control-panel'>
-        <p>Change your destiny {this.props.hideBuses ? 'h' : 'nh'} {this.props.realTime ? 'r' : 'nr'}</p>
+        <p>Change your destiny</p>
         <div>
           <label><input type="checkbox"
             onChange={this.props.handleHideBusesChange}

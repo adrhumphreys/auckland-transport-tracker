@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ReactMapGL from 'react-map-gl';
+import ReactMapGL, { NavigationControl } from 'react-map-gl';
 
 const MAPBOX_TOKEN = process.env.MAPBOX_TOKEN || '';
 
@@ -38,7 +38,10 @@ class Map extends React.Component<any, State> {
         mapStyle='mapbox://styles/mapbox/basic-v9'
         onViewportChange={(viewport: any) => this.setState({viewport})}
       >
-      {this.props.children}
+        {this.props.children}
+        <div className="map-controls">
+          <NavigationControl onViewStateChange={() => null} onViewportChange={(viewport: any) => this.setState({viewport})} />
+        </div>
       </ReactMapGL>
     );
   }

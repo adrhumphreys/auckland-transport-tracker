@@ -35,7 +35,8 @@ class Vehicle extends React.Component<Props> {
 
     render() {
         return (
-            <Marker 
+            <Marker
+                className="map-marker"
                 latitude={this.props.latitude} 
                 longitude={this.props.longitude}>
                 {this.getIcon()}

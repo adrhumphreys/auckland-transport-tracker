@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import {Props as VehicleProps} from '../components/Vehicle'
-import routes from '../assets/routes';
+import routes from '../assets/routes.json';
 
 const API_KEY = process.env.AUCKLAND_GTSF_KEY || '';
 
@@ -26,12 +26,12 @@ export function getVehicles(): Promise<VehicleProps[]> {
 
 // expects json blob from the response
 function processResponse({response}: any): VehicleProps[] {
-    //get the routes in ye old memory
-    // const routes = JSON.parse(routeJson)
-    
-
     return response.entity.map(({vehicle}: any) => {
         let route = _.find(routes, {route_id: vehicle.trip.route_id})
+
+        if(!route) {
+            return null;
+        }
 
         return {
             id: vehicle.vehicle.id,
