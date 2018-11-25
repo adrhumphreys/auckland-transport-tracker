@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Marker} from 'react-map-gl'
+import { Marker } from 'react-map-gl'
 
 export interface Props {
     id: string,
