@@ -1,4 +1,4 @@
-import { find } from 'lodash'
+import { find, filter } from 'lodash'
 import { Props as VehicleProps } from '../components/Vehicle'
 import routes from '../assets/routes.json';
 
@@ -27,10 +27,24 @@ export function getVehicles(): Promise<VehicleProps[]> {
 // expects json blob from the response
 function processResponse({response}: any): VehicleProps[] {
     return response.entity.map(({vehicle}: any) => {
-        let route = find(routes, {route_id: vehicle.trip.route_id})
+        // let route = find(routes, {route_id: vehicle.trip.route_id})
+        // The bus people have uniqid - version as their id....
+        let route = filter(routes, (route) => {
+            return route.route_id.indexOf(vehicle.trip.route_id.split('-')[0]) > -1
+        })[0]
 
         if(!route) {
-            return null;
+            return {
+                id: vehicle.vehicle.id,
+                occupied: vehicle.occupancy_status !== 0,
+                timestamp: vehicle.timestamp,
+                latitude: vehicle.position.latitude,
+                longitude: vehicle.position.longitude,
+                shortName: null,
+                longName: null,
+                type: Math.floor(Math.random() * Math.floor(6)),
+                routeId: null
+            }
         }
 
         return {
@@ -41,7 +55,7 @@ function processResponse({response}: any): VehicleProps[] {
             longitude: vehicle.position.longitude,
             shortName: route.route_short_name || '',
             longName: route.route_long_name || '',
-            type: route.route_type || '',
+            type: route.route_type || 6,
             routeId: vehicle.trip.route_id || ''
         }
     })
