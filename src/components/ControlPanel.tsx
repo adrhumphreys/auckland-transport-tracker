@@ -23,7 +23,7 @@ class ControlPanel extends React.Component<Props> {
             onChange={this.props.handleHideBusesChange}
             checked={this.props.hideBuses}/> Hide buses</label>
         </div>
-        <div>
+        {/* <div>
           <label><input type="checkbox"
             onChange={this.props.handleHideStreetCarsChange}
             checked={this.props.hideStreetCars}/> Hide trams, streetcars, light rail</label>
@@ -32,7 +32,7 @@ class ControlPanel extends React.Component<Props> {
           <label><input type="checkbox"
             onChange={this.props.handleHideMetroChange}
             checked={this.props.hideMetro}/> Hide subway/metro</label>
-        </div>
+        </div> */}
         <div>
           <label><input type="checkbox"
             onChange={this.props.handleHideFerriesChange}

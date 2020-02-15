@@ -35,7 +35,8 @@ class Map extends React.Component<any, State> {
         {...this.state.viewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
         className="main-map"
-        mapStyle='mapbox://styles/mapbox/basic-v9'
+        // mapStyle='mapbox://styles/mapbox/basic-v9'
+        mapStyle='mapbox://styles/mapbox/streets-v11'
         onViewportChange={(viewport: any) => this.setState({viewport})}
       >
         {this.props.children}
