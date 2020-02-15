@@ -3,7 +3,7 @@ import { Marker } from 'react-map-gl'
 
 export interface Props {
     id: string,
-    occupied: boolean,
+    occupied: number,
     timestamp: number,
     latitude: number,
     longitude: number,
@@ -14,23 +14,44 @@ export interface Props {
 }
 
 class Vehicle extends React.Component<Props> {
-    getIcon() {
+    getOccupiedIcon() {
+        switch (this.props.occupied) {
+            case 0:
+                return '🟢'
+            case 1:
+                return '🟠'
+            case 2:
+                return '🔴'
+        }
+
+        return '🟡'
+    }
+
+    getTypeIcon() {
         switch (this.props.type) {
             case 0:
-                return '🚙';
+                return '🚙'
             case 1:
-                return '🚂';
+                return '🚂'
             case 2:
-                return '🚈';
+                return '🚈'
             case 3:
-                return '🚌';
+                return '🚌'
             case 4:
-                return '⛴';
+                return '⛴'
             case 5:
-                return '🚅';
+                return '🚅'
         }
 
         return '🚜';
+    }
+
+    getIcon() {
+        if (this.props.type == null) {
+            return '🕵️'
+        }
+
+        return this.getOccupiedIcon() + '' + this.getTypeIcon()
     }
 
     render() {
@@ -39,7 +60,7 @@ class Vehicle extends React.Component<Props> {
                 className="map-marker"
                 latitude={this.props.latitude} 
                 longitude={this.props.longitude}>
-                {this.getIcon()}
+                <div onClick={() => console.log(this.props)}>{this.getIcon()}</div>
             </Marker>
         )
     }

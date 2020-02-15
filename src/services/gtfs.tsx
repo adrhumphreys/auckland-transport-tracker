@@ -1,6 +1,4 @@
-import { find, filter } from 'lodash'
-import { Props as VehicleProps } from '../components/Vehicle'
-import routes from '../assets/routes.json';
+import Vehicle, { Props as VehicleProps } from '../components/Vehicle'
 
 const API_KEY = process.env.AUCKLAND_GTSF_KEY || '';
 
@@ -12,51 +10,71 @@ export function getVehicles(): Promise<VehicleProps[]> {
         }
     }
 
-    const vehicles = fetch(
+    const vehiclesJson = fetch(
             'https://api.at.govt.nz/v2/public/realtime/vehiclelocations',
             options
         )
         .then(response => response.json())
-        .then(json => processResponse(json));
+        .catch(err => console.log('Issue with GTFS:' + err));
+
+    const routesJson = fetch(
+            'https://api.at.govt.nz/v2/gtfs/routes',
+            options
+        )
+        .then(response => response.json())
+        .catch(err => console.log('Issue with GTFS:' + err));
+
+    const vehicles = Promise.all([routesJson, vehiclesJson]).then((values) => processResponse(values[1], values[0]));
         
-    vehicles.catch(err => console.log('Issue with GTFS:' + err))
-    
     return vehicles;
 }
 
 // expects json blob from the response
-function processResponse({response}: any): VehicleProps[] {
-    return response.entity.map(({vehicle}: any) => {
-        // let route = find(routes, {route_id: vehicle.trip.route_id})
-        // The bus people have uniqid - version as their id....
-        let route = filter(routes, (route) => {
-            return route.route_id.indexOf(vehicle.trip.route_id.split('-')[0]) > -1
+function processResponse(vehiclesJson: any , routesJson: any): VehicleProps[] {
+    const routes = routesJson.response.map((route: any) => {
+        return {
+            id: route.route_id,
+            type: route.route_type,
+            shortName: route.route_short_name,
+            longName: route.route_long_name
+        };
+    });
+
+    const vehicles = vehiclesJson.response.entity.map(({vehicle}: any) => {
+        const route = routes.filter(({ id }: { id: string }) => {
+            if (vehicle.trip == undefined || vehicle.trip.route_id == undefined) {
+                return false;
+            }
+
+            return id == vehicle.trip.route_id
         })[0]
 
-        if(!route) {
+        if (!route) {
             return {
                 id: vehicle.vehicle.id,
-                occupied: vehicle.occupancy_status !== 0,
+                occupied: vehicle.occupancy_status,
                 timestamp: vehicle.timestamp,
                 latitude: vehicle.position.latitude,
                 longitude: vehicle.position.longitude,
                 shortName: null,
                 longName: null,
-                type: Math.floor(Math.random() * Math.floor(6)),
+                type: null,
                 routeId: null
             }
         }
 
         return {
             id: vehicle.vehicle.id,
-            occupied: vehicle.occupancy_status !== 0,
+            occupied: vehicle.occupancy_status,
             timestamp: vehicle.timestamp,
             latitude: vehicle.position.latitude,
             longitude: vehicle.position.longitude,
-            shortName: route.route_short_name || '',
-            longName: route.route_long_name || '',
-            type: route.route_type || 6,
-            routeId: vehicle.trip.route_id || ''
+            shortName: route.shortName,
+            longName: route.longName || '',
+            type: route.type || 6,
+            routeId: route.id || ''
         }
     })
+
+    return vehicles
 }

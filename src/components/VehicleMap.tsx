@@ -5,6 +5,9 @@ import Map from './Map';
 
 export interface Props {
   hideBuses: boolean,
+  hideStreetCars: boolean,
+  hideMetro: boolean,
+  hideFerries: boolean,
   realTime: boolean
 }
 
@@ -23,17 +26,43 @@ class VehicleMap extends React.Component<Props, State> {
   refreshVehicles() {
     getVehicles()
       .then(vehicles => this.setState({vehicles: vehicles}))
-      .then(() => setTimeout(() => this.props.realTime ? this.refreshVehicles() : null, 1000));
+      .then(() => setTimeout(() => this.props.realTime ? this.refreshVehicles() : null, 5000))
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if(nextProps.realTime && !this.props.realTime) {
-      this.refreshVehicles();
+      this.refreshVehicles()
     }
   }
 
   render() {
-    const vehicles = !this.props.hideBuses ? this.state.vehicles: this.state.vehicles.filter(v => v.type != 3)
+    const {
+      hideBuses,
+      hideMetro,
+      hideStreetCars,
+      hideFerries,
+    } = this.props
+    
+    let filters: Number[] = []
+
+    if (hideBuses) {
+      filters.push(3)
+    }
+
+    if (hideMetro) {
+      filters.push(0)
+    }
+
+    if (hideStreetCars) {
+      filters.push(1)
+    }
+
+    if (hideFerries) {
+      filters.push(4)
+    }
+
+    const vehicles = this.state.vehicles.filter(v => filters.indexOf(v.type) < 0 && v.type != null)
+    // const vehicles = this.state.vehicles.filter(v => v.type != null)
 
     return (
       <div>
